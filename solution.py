@@ -18,8 +18,12 @@ chat_id = 298754188 # Ваш chat ID, не меняйте название пе�
 
 def solution(p: float, x: np.array) -> tuple:
     n = len(x)
-    s2 = np.var(x, ddof=1)
-    alpha = 1 - p / 2
-    left = (n - 1) * s2 / chi2.ppf(alpha, n - 1)
-    right = (n - 1) * s2 / chi2.ppf(1 - alpha, n - 1)
-    return np.sqrt(left), np.sqrt(right)
+    df = n - 1
+    x_bar = np.mean(x)
+    s_squared = np.var(x, ddof=1)
+    alpha = 1 - p
+    chi2_left = chi2.ppf(alpha / 2, df)
+    chi2_right = chi2.ppf(1 - alpha / 2, df)
+    left = np.sqrt(df * s_squared / chi2_right)
+    right = np.sqrt(df * s_squared / chi2_left)
+    return x_bar - left, x_bar + right
