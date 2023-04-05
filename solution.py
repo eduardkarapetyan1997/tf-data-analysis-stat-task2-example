@@ -6,37 +6,16 @@ from scipy.stats import chi2
 
 chat_id = 298754188 # Ваш chat ID, не меняйте название переменной
 
-#def solution(p: float, x: np.array) -> tuple:
-    # Измените код этой функции
-    # Это будет вашим решением
-    # Не меняйте название функции и её аргументы
-#     alpha = 1 - p
-#     loc = x.mean()
-#     scale = np.sqrt(np.var(x)) / np.sqrt(len(x))
-#     return loc - scale * norm.ppf(1 - alpha / 2), \
-#            loc - scale * norm.ppf(alpha / 2)
-
-# def solution(p: float, x: np.array) -> tuple:
-#     n = len(x)
-#     df = n - 1
-#     x_bar = np.mean(x)
-#     s_squared = np.var(x, ddof=1)
-#     alpha = 1 - p
-#     chi2_left = chi2.ppf(alpha / 2, df)
-#     chi2_right = chi2.ppf(1 - alpha / 2, df)
-#     left = np.sqrt(df * s_squared / chi2_right)
-#     right = np.sqrt(df * s_squared / chi2_left)
-#     return x_bar - left, x_bar + right
-
 def solution(p: float, x: np.array) -> tuple:
     alpha = 1 - p
     n = len(x)
-    s_squared = np.var(x, ddof=1)
-    disp_coef = 23 * (2 - np.pi / 2)
     
-    nom = (n - 1) * s_squared
-    rv = chi2(df = n - 1)
-    left = rv.ppf(1 - alpha / 2) * disp_coef
-    right = rv.ppf(alpha / 2) * disp_coef
+    x2 = np.array([xi**2 for xi in x])
+    x2_mean = x2.mean()
     
-    return np.sqrt(nom / left), np.sqrt(nom / right)
+    chi2_rv = chi2(df = 2 * n)
+    
+    left = chi2_rv.ppf(1 - alpha / 2)
+    right = chi2_rv.ppf(alpha / 2)
+    
+    return np.sqrt(n * x2_mean / (left * 9)), np.sqrt(n * x2_mean / (right * 9))
